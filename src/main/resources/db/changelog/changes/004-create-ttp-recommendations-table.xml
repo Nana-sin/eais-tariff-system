@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="004-create-ttp-recommendation-sequence" author="ttp-system">
+        <createSequence sequenceName="ttp_recommendation_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="004-create-ttp-recommendations-table" author="ttp-system">
+        <createTable tableName="ttp_recommendations">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="request_id" type="VARCHAR(36)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tn_ved_code" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_name" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="summary" type="VARCHAR(5000)"/>
+            <column name="total_score" type="DOUBLE PRECISION"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed_at" type="TIMESTAMP"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-ttp-recommendations-indexes" author="ttp-system">
+        <createIndex indexName="idx_recommendation_request_id" tableName="ttp_recommendations">
+            <column name="request_id"/>
+        </createIndex>
+        <createIndex indexName="idx_recommendation_user" tableName="ttp_recommendations">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex indexName="idx_recommendation_status" tableName="ttp_recommendations">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_recommendation_created" tableName="ttp_recommendations">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="004-add-ttp-recommendations-comments" author="ttp-system">
+        <setTableRemarks tableName="ttp_recommendations"
+                         remarks="Результаты оценки эффективности мер ТТП"/>
+    </changeSet>
+
+</databaseChangeLog>

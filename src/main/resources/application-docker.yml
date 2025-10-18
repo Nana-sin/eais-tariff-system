@@ -1,0 +1,89 @@
+# application-docker.yml
+spring:
+  application:
+    name: ttp-evaluation-system
+
+  datasource:
+    postgres:
+      url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      username: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        maximum-pool-size: 20
+        minimum-idle: 5
+
+    clickhouse:
+      url: jdbc:clickhouse://${CLICKHOUSE_HOST}:${CLICKHOUSE_PORT}/${CLICKHOUSE_DB}
+      username: ${CLICKHOUSE_USER}
+      password: ${CLICKHOUSE_PASSWORD}
+      driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        show-sql: false
+    show-sql: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: ttp-evaluation-consumer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+    contexts: dev
+
+app:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: 86400000
+
+  kafka:
+    topics:
+      classification-requests: classification-requests
+      ttp-evaluation-tasks: ttp-evaluation-tasks
+      notifications: notifications
+
+integration:
+  trademap:
+    api-url: https://api.trademap.org
+    api-key: ${TRADEMAP_API_KEY}
+  uncomtrade:
+    api-url: https://comtradeapi.un.org/data/v1
+    api-key: ${UNCOMTRADE_API_KEY}
+  rosstat:
+    api-url: https://www.fedstat.ru/api/v1
+    api-key: ${ROSSTAT_API_KEY}
+  wto:
+    api-url: https://api.wto.org/tariff/v1
+    api-key: ${WTO_API_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.ttp.evaluation: DEBUG

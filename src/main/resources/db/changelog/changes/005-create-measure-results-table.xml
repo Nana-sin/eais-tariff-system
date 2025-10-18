@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="005-create-measure-result-sequence" author="ttp-system">
+        <createSequence sequenceName="measure_result_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="005-create-measure-results-table" author="ttp-system">
+        <createTable tableName="measure_results">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="recommendation_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_measure_recommendation"
+                             references="ttp_recommendations(id)" deleteCascade="true"/>
+            </column>
+            <column name="measure_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="measure_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="applicable" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reasoning" type="VARCHAR(2000)"/>
+            <column name="details" type="TEXT"/>
+            <column name="import_share" type="DOUBLE PRECISION"/>
+            <column name="production_capacity" type="DOUBLE PRECISION"/>
+            <column name="price_difference" type="DOUBLE PRECISION"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="005-create-measure-results-indexes" author="ttp-system">
+        <createIndex indexName="idx_measure_recommendation" tableName="measure_results">
+            <column name="recommendation_id"/>
+        </createIndex>
+        <createIndex indexName="idx_measure_type" tableName="measure_results">
+            <column name="measure_type"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="005-add-measure-results-comments" author="ttp-system">
+        <setTableRemarks tableName="measure_results"
+                         remarks="Результаты оценки конкретных мер ТТП (6 типов мер)"/>
+    </changeSet>
+
+</databaseChangeLog>

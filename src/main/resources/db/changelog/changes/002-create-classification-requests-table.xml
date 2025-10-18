@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="002-create-classification-request-sequence" author="ttp-system">
+        <createSequence sequenceName="classification_request_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="002-create-classification-requests-table" author="ttp-system">
+        <createTable tableName="classification_requests">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_classification_user"
+                             references="users(id)" deleteCascade="false"/>
+            </column>
+            <column name="product_name" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_description" type="VARCHAR(5000)"/>
+            <column name="tn_ved_code" type="VARCHAR(10)"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expert_comment" type="VARCHAR(5000)"/>
+            <column name="confidence_score" type="DOUBLE PRECISION"/>
+            <column name="reviewed_by" type="BIGINT">
+                <constraints foreignKeyName="fk_classification_reviewer"
+                             references="users(id)" deleteCascade="false"/>
+            </column>
+            <column name="reviewed_at" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-create-classification-requests-indexes" author="ttp-system">
+        <createIndex indexName="idx_classification_user" tableName="classification_requests">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex indexName="idx_classification_status" tableName="classification_requests">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_classification_created" tableName="classification_requests">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="002-add-classification-comments" author="ttp-system">
+        <setTableRemarks tableName="classification_requests"
+                         remarks="Запросы на классификацию товаров по кодам ТН ВЭД"/>
+    </changeSet>
+
+</databaseChangeLog>

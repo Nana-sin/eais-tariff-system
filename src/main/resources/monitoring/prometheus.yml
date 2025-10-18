@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'ttp-application'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['ttp-app:8080']
+        labels:
+          application: 'ttp-evaluation-system'
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']

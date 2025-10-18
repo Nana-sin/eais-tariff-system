@@ -1,0 +1,307 @@
+# src/main/resources/application.yml
+spring:
+  application:
+    name: ttp-evaluation-system
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # PostgreSQL Configuration
+  datasource:
+    postgres:
+      jdbc-url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:ttp_operational}
+      username: ${POSTGRES_USER:ttp_user}
+      password: ${POSTGRES_PASSWORD:ttp_password}
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        maximum-pool-size: 20
+        minimum-idle: 5
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        pool-name: PostgresHikariPool
+
+    # ClickHouse Configuration
+    clickhouse:
+      jdbc-url: jdbc:clickhouse://${CLICKHOUSE_HOST:localhost}:${CLICKHOUSE_PORT:8123}/${CLICKHOUSE_DB:ttp_analytics}
+      username: ${CLICKHOUSE_USER:ttp_user}
+      password: ${CLICKHOUSE_PASSWORD:ttp_password}
+      driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+      hikari:
+        maximum-pool-size: 10
+        minimum-idle: 2
+        connection-timeout: 30000
+        pool-name: ClickHouseHikariPool
+
+  # JPA/Hibernate
+  jpa:
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 50
+          time_zone: UTC
+        order_inserts: true
+        order_updates: true
+
+  # Liquibase
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+    drop-first: false
+    default-schema: public
+
+  # Redis
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+
+  # Kafka
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ttp-evaluation-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: java.util.HashMap
+        # Увеличиваем session timeout до 60 секунд
+        session.timeout.ms: 60000
+        # Увеличиваем heartbeat interval
+        heartbeat.interval.ms: 5000
+        # Максимальное время простоя соединения
+        connections.max.idle.ms: 1800000  # 30 минут
+        # Таймаут запроса
+        request.timeout.ms: 60000
+        group.instance.id: ${HOSTNAME}-${spring.application.name}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      compression-type: snappy
+      properties:
+        connections.max.idle.ms: 1800000
+    listener:
+      concurrency: 3
+      ack-mode: manual
+
+  # Cache
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000 # 1 hour
+      cache-null-values: false
+
+  # Mail (for notifications)
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  # Jackson
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      write-date-keys-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+    time-zone: UTC
+    default-property-inclusion: non_null
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    connection-timeout: 20000
+    max-connections: 10000
+    accept-count: 100
+
+# Management & Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,liquibase
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: ${spring.application.name}
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+    db:
+      enabled: true
+    redis:
+      enabled: true
+    kafka:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.ttp.evaluation: DEBUG
+    org.springframework.web: INFO
+    org.springframework.kafka: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.apache.kafka: WARN  # Меньше INFO логов
+    org.apache.kafka.clients.NetworkClient: WARN
+    org.apache.kafka.clients.consumer.internals: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/ttp-evaluation-system.log
+    max-size: 10MB
+    max-history: 30
+
+# Application Specific Configuration
+app:
+  kafka:
+    topics:
+      classification-requests: classification_requests
+      classification-responses: classification_responses
+      ttp-evaluation-tasks: ttp_evaluation_tasks
+      ttp-recommendations: ttp_recommendations
+      data-updates: data_updates
+      notifications: notifications
+
+  cache:
+    ttl:
+      classification: 3600
+      product: 7200
+      tariff: 86400
+
+  scheduler:
+    data-extraction:
+      cron: "0 0 2 * * *"  # ?????? ???? ? 2:00
+      enabled: true
+    data-transformation:
+      cron: "0 30 3 * * *" # ?????? ???? ? 3:30
+      enabled: true
+    analytics-load:
+      cron: "0 0 5 * * *"  # ?????? ???? ? 5:00
+      enabled: true
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:7H6fG2xZ8kL4mN9pQ1rS3tV5wX8yA0cD1eF2gH3iJ4kL5mN6oP7qR8sT9uV0wXyZaBcDeFgHiJkLmNoPqRsTu}
+      expiration: 86400000 # 24 hours
+
+# External API Integration
+integration:
+  timeout:
+    connect: 30000  # ← Увеличить до 30 секунд
+    read: 60000     # ← Увеличить до 60 секунд
+  uncomtrade:
+    base-url: https://comtradeapi.un.org/public/v1
+    api-key: NOT_REQUIRED  # Public API не требует ключа
+    timeout: 30000
+    max-retries: 3
+    history-years: 3
+
+  emiss:
+    base-url: https://fedstat.ru/sdmx/v2
+    timeout: 30000
+
+  wto:
+    base-url: https://goods-schedules.wto.org
+    timeout: 30000
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      uncomtrade:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+      emiss:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+      wto:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+      external-api:
+        register-health-indicator: true
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 60000
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 50
+        slow-call-duration-threshold: 5000
+
+  retry:
+    instances:
+      external-api:
+        max-attempts: 1
+        retryExceptions:
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException.TooManyRequests
+        wait-duration: 1000
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
+# SpringDoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha

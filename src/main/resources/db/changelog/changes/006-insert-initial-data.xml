@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="006-insert-admin-user" author="ttp-system">
+        <comment>Создание администратора по умолчанию</comment>
+        <insert tableName="users">
+            <column name="id" valueSequenceNext="user_sequence"/>
+            <column name="email" value="admin@ttp-evaluation.ru"/>
+            <column name="password_hash" value="$2a$10$rG4JqMXZQKDNjXJKdNZKqO7.ZGr5hZqPqBvPjLjGKGx8KGv5KGv5K"/> <!-- password: admin123 -->
+            <column name="full_name" value="Системный Администратор"/>
+            <column name="role" value="ADMIN"/>
+            <column name="company" value="АНО Роспром"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="006-insert-test-expert" author="ttp-system" context="dev">
+        <comment>Тестовый эксперт (только для dev окружения)</comment>
+        <insert tableName="users">
+            <column name="id" valueSequenceNext="user_sequence"/>
+            <column name="email" value="expert@ttp-evaluation.ru"/>
+            <column name="password_hash" value="$2a$10$rG4JqMXZQKDNjXJKdNZKqO7.ZGr5hZqPqBvPjLjGKGx8KGv5KGv5K"/> <!-- password: expert123 -->
+            <column name="full_name" value="Иванов Иван Иванович"/>
+            <column name="role" value="EXPERT"/>
+            <column name="company" value="АНО Роспром"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="006-insert-test-enterprise" author="ttp-system" context="dev">
+        <comment>Тестовое предприятие (только для dev окружения)</comment>
+        <insert tableName="users">
+            <column name="id" valueSequenceNext="user_sequence"/>
+            <column name="email" value="enterprise@example.com"/>
+            <column name="password_hash" value="$2a$10$rG4JqMXZQKDNjXJKdNZKqO7.ZGr5hZqPqBvPjLjGKGx8KGv5KGv5K"/> <!-- password: enterprise123 -->
+            <column name="full_name" value="Петров Петр Петрович"/>
+            <column name="role" value="ENTERPRISE"/>
+            <column name="company" value="ООО Тестовое Предприятие"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="006-insert-sample-tn-ved-codes" author="ttp-system" context="dev">
+        <comment>Примеры кодов ТН ВЭД для тестирования</comment>
+
+        <insert tableName="product_classifications">
+            <column name="id" valueSequenceNext="product_classification_sequence"/>
+            <column name="tn_ved_code" value="72"/>
+            <column name="description" value="Черные металлы"/>
+            <column name="parent_code"/>
+            <column name="level" valueNumeric="2"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+        </insert>
+
+        <insert tableName="product_classifications">
+            <column name="id" valueSequenceNext="product_classification_sequence"/>
+            <column name="tn_ved_code" value="7208"/>
+            <column name="description" value="Прокат плоский из железа или нелегированной стали"/>
+            <column name="parent_code" value="72"/>
+            <column name="level" valueNumeric="4"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+        </insert>
+
+        <insert tableName="product_classifications">
+            <column name="id" valueSequenceNext="product_classification_sequence"/>
+            <column name="tn_ved_code" value="720851"/>
+            <column name="description" value="Прокат горячекатаный"/>
+            <column name="parent_code" value="7208"/>
+            <column name="level" valueNumeric="6"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

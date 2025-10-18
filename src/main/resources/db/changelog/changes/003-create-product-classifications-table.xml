@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="003-create-product-classification-sequence" author="ttp-system">
+        <createSequence sequenceName="product_classification_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="003-create-product-classifications-table" author="ttp-system">
+        <createTable tableName="product_classifications">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tn_ved_code" type="VARCHAR(10)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_code" type="VARCHAR(10)"/>
+            <column name="level" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="003-create-product-classifications-indexes" author="ttp-system">
+        <createIndex indexName="idx_product_tn_ved" tableName="product_classifications">
+            <column name="tn_ved_code"/>
+        </createIndex>
+        <createIndex indexName="idx_product_parent" tableName="product_classifications">
+            <column name="parent_code"/>
+        </createIndex>
+        <createIndex indexName="idx_product_level" tableName="product_classifications">
+            <column name="level"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="003-add-product-comments" author="ttp-system">
+        <setTableRemarks tableName="product_classifications"
+                         remarks="Справочник классификации товаров (ТН ВЭД ЕАЭС)"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-user-sequence" author="ttp-system">
+        <createSequence sequenceName="user_sequence" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="001-create-users-table" author="ttp-system">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password_hash" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="company" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001-create-users-indexes" author="ttp-system">
+        <createIndex indexName="idx_user_email" tableName="users">
+            <column name="email"/>
+        </createIndex>
+        <createIndex indexName="idx_user_role" tableName="users">
+            <column name="role"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="001-add-users-comments" author="ttp-system">
+        <setTableRemarks tableName="users" remarks="Пользователи системы (предприятия, эксперты, администраторы)"/>
+        <setColumnRemarks tableName="users" columnName="email" remarks="Email пользователя (логин)"/>
+        <setColumnRemarks tableName="users" columnName="role" remarks="Роль: ENTERPRISE, EXPERT, ADMIN"/>
+    </changeSet>
+
+</databaseChangeLog>
