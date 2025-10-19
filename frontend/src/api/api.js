@@ -1,16 +1,16 @@
 import axios from 'axios'
 
 // Базовый URL API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 // Создаем экземпляр axios
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
+   baseURL: API_BASE_URL,
+   timeout: 30000,
+   headers: {
+     'Content-Type': 'application/json'
+   }
+ })
 
 // Интерцептор для добавления токена
 apiClient.interceptors.request.use(

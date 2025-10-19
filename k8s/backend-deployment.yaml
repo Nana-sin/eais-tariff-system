@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: backend-deployment
+   namespace: eais-system
+   labels:
+     app: eais-backend
+ spec:
+   replicas: 3
+   selector:
+     matchLabels:
+       app: eais-backend
+   template:
+     metadata:
+       labels:
+         app: eais-backend
+     spec:
+       containers:
+       - name: backend
+         image: your-registry/eais-backend:latest
+         imagePullPolicy: Always
+         ports:
+         - containerPort: 8000
+           name: http
+         env:
+         - name: ENVIRONMENT
+           valueFrom:
+             configMapKeyRef:
+               name: eais-config
+               key: ENVIRONMENT
+         - name: ALLOWED_ORIGINS
+           valueFrom:
+             configMapKeyRef:
+               name: eais-config
+               key: ALLOWED_ORIGINS
+         - name: SECRET_KEY
+           valueFrom:
+             secretKeyRef:
+              name: eais-secrets
+               key: SECRET_KEY
+         resources:
+           requests:
+             memory: "256Mi"
+             cpu: "250m"
+           limits:
+             memory: "512Mi"
+             cpu: "500m"
+         livenessProbe:
+           httpGet:
+             path: /health
+             port: 8000
+           initialDelaySeconds: 30
+           periodSeconds: 10
+           timeoutSeconds: 5
+           failureThreshold: 3
+         readinessProbe:
+           httpGet:
+             path: /health
+             port: 8000
+           initialDelaySeconds: 10
+           periodSeconds: 5
+           timeoutSeconds: 3
+           failureThreshold: 3
+         volumeMounts:
+         - name: data-volume
+           mountPath: /app/data
+       volumes:
+       - name: data-volume
+         persistentVolumeClaim:
+           claimName: eais-data-pvc
+ ---
+ apiVersion: v1
+ kind: PersistentVolumeClaim
+ metadata:
+   name: eais-data-pvc
+   namespace: eais-system
+ spec:
+   accessModes:
+     - ReadWriteOnce
+   resources:
+     requests:
+       storage: 5Gi

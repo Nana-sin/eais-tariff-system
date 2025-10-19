@@ -1,0 +1,7 @@
+apiVersion: v1
+ kind: Namespace
+ metadata:
+   name: eais-system
+   labels:
+     name: eais-system
+     environment: production

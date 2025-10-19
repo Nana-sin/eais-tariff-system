@@ -1,0 +1,16 @@
+apiVersion: v1
+ kind: Service
+ metadata:
+   name: frontend-service
+   namespace: eais-system
+   labels:
+     app: eais-frontend
+ spec:
+   type: ClusterIP
+   selector:
+     app: eais-frontend
+   ports:
+   - name: http
+     protocol: TCP
+     port: 80
+     targetPort: 8080
