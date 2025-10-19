@@ -1,0 +1,126 @@
+/* --- Reset / базовые установки --- */
+* { box-sizing: border-box; }
+html,body,#app { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f8fafc; /* светлый фон страницы */
+  color: #0f172a;
+  line-height: 1.4;
+  font-size: 14px;
+  padding: 0;
+}
+
+/* --- Контейнеры и отступы --- */
+.p-1 { padding: 4px; }
+.p-2 { padding: 8px; }
+.p-3 { padding: 12px; }
+.p-4 { padding: 16px; }
+.p-6 { padding: 24px; }
+.p-8 { padding: 32px; }
+
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+
+.w-full { width: 100%; }
+.w-1\/2 { width: 50%; }
+
+.min-h-screen { min-height: 100vh; }
+
+/* --- Типографика --- */
+.text-xs { font-size: 12px; }
+.text-sm { font-size: 13px; }
+.text-base { font-size: 14px; }
+.text-lg { font-size: 18px; }
+.text-xl { font-size: 20px; }
+.text-2xl { font-size: 24px; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+
+/* --- Фоны и рамки --- */
+.bg-white { background: #fff; }
+.bg-gray-50 { background: #f8fafc; }
+.border { border: 1px solid #e6eef6; }
+.rounded { border-radius: 8px; }
+.rounded-sm { border-radius: 6px; }
+.shadow-sm { box-shadow: 0 1px 4px rgba(16,24,40,0.06); }
+
+/* --- Кнопки --- */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+.btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e6eef6;
+  background: white;
+}
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.bg-blue-600 { background: #0b63ff; color: #fff; border-color: #0b63ff; }
+.bg-green-600 { background: #059669; color: #fff; border-color: #059669; }
+.text-white { color: #fff; }
+
+/* --- Формы --- */
+input[type="text"], input[type="search"], input[type="email"], input[type="password"], textarea, select {
+  padding: 8px 10px;
+  border: 1px solid #d7e3ef;
+  border-radius: 6px;
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: #a7d0ff;
+  box-shadow: 0 0 0 3px rgba(11,99,255,0.08);
+}
+
+/* --- Таблицы --- */
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { padding: 10px; border-bottom: 1px solid #eef3f8; text-align: left; }
+thead th { background: transparent; font-weight: 600; }
+
+/* --- Flex / Grid --- */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-4 { gap: 16px; }
+
+/* --- Списки и карточки --- */
+.card { background: #fff; border: 1px solid #e6eef6; border-radius: 8px; padding: 16px; }
+.list-item { padding: 12px; border: 1px solid #eef3f8; border-radius: 6px; background: #fff; }
+
+/* --- Модальные окна (простая реализация) --- */
+.fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.bg-black\/40 { background: rgba(0,0,0,0.4); }
+.modal { background: #fff; border-radius: 8px; padding: 16px; max-width: 640px; width: 100%; box-shadow: 0 10px 30px rgba(2,6,23,0.2); }
+
+/* --- Прочее --- */
+.cursor-pointer { cursor: pointer; }
+.text-blue-600 { color: #0b63ff; }
+.text-red-600 { color: #dc2626; }
+.pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace; white-space: pre-wrap; }
+
+/* --- Helpers для svg и графиков --- */
+svg { display: block; }
+
+/* --- Утилиты для небольших экранов --- */
+@media (max-width: 768px) {
+  .p-6 { padding: 16px; }
+  .flex { flex-direction: column; gap: 12px; }
+  .w-1\/2 { width: 100%; }
+}
